@@ -79,17 +79,96 @@ implementing a class called GoogleCloudLogManager
 
  ```
 
-7. Running the application locally.  
-   * Revise how to set up a python development environment and Google Cloud project as described in the previous post  
-   [GCP python quickstart](2023-07-27-gcp-python-quickstart.md)  
-   
-  * Instead of creating your own repo, clone the demo git repo from Github
+## Running the application locally  
+
+### Create Google Cloud resources
+1. Create a [Google Cloud](https://console.cloud.google.com/home/dashboard)  platform account if you do not already have it.
+2. [Create a Google Cloud project](https://developers.google.com/workspace/guides/create-project) or use an existing one.
+3. Configure application identity
+   * Create a [Service Account(SA) key](https://cloud.google.com/iam/docs/keys-create-delete)
+   * Assign the IAM role Logs Writer to the SA during creation.
+ 
+
+
+### Use Google Cloud Shell
+To start coding right away, launch [Google Cloud Shell](https://console.cloud.google.com/home/)
+Google Cloud Shell is an interactive shell environment for Google Cloud accessible from the Google Cloud Console. It 
+includes the Cloud SDK, an interactive [Code Editor](https://ide.cloud.google.com), python and other Google Cloud and 
+general development tools. 
+ 
+
+### Or use your own development environment
+If you would rather use **your own local development machine**:
+
+#### [Install Google Cloud SDK](https://cloud.google.com/sdk/docs/quickstart)
+
+#### Install Python
+
+*Note*: Console snippets for Debian/Ubuntu based distributions.
+
+**On your local development machine**
+
+1. Install python packages.
+
+    ```console
+    sudo apt update
+    sudo apt install python3 python3-dev python3-venv
+    ```
+    
+2. Install pip 
+
+    *Note*: Debian provides a package for pip
+
+    ```console
+    sudo apt install python-pip
+    ```
+    Alternatively pip can be installed with the following method
+    ```console
+    wget https://bootstrap.pypa.io/get-pip.py
+    sudo python3 get-pip.py
+    ```
+
+### Clone git repo from Github
   ```console
   git clone [repo_link]
    ```
-  * Create a service account and key as described in previous [Access to GCP resources](2023-07-31-access-to-GCP-res.md) 
-  * Remember to assign the IAM role Logs Writer to the SA during creation.
-  * Edit the [application configuration](config.py repo link) to update the key LG_SA_KEY_JSON_FILE with the SA key file path    
+
+### Create a pyhon virtual environment
+
+User your cloned git repository folder for your source code and Python [venv](https://docs.python.org/3/library/venv.html)
+virtual environment to isolate python dependencies. 
+
+```
+cd gfs_log_manager
+python -m venv [venv-name]
+source [venv-name]/bin/activate
+```
+Usual values for [venv-name] are `venv`, `dvenv`, `venv39` for a python 3.9 version virtual environment, etc.
+
+### App configuration
+  * Edit the application configuration Config class to update the key LG_SA_KEY_JSON_FILE with the SA key file path 
+  created in  [Create Google Cloud resources](#create-google-cloud-resources)
+
+### Running the app
+  * Set Flask environment variables
+   ```console
+   export  FLASK_SECRET_KEY=$(openssl rand -base64 128)
+   export  FLASK_APP=app:create_app
+   ```
+
+  * Run with flask
+   ```console
+   flask run   
+   ```
+
+  * Run with gunicorn
+   ```console
+   gunicorn start:app
+   
+   ```
 
 
-8. Here is a little demo: [Demo App](link)
+
+
+
+
