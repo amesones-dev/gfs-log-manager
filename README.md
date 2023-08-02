@@ -46,7 +46,7 @@ implementing a class called GoogleCloudLogManager
 * Defines a log_example method to illustrate both ways of leveraging Google Cloud 
 
 
-5. Class use example to add logging to an app
+**Class use example to add logging to an app**
 ```console
     # App specific
     # Link Google Cloud Manager to app
@@ -59,7 +59,7 @@ implementing a class called GoogleCloudLogManager
 ```
 
 
-6. App configuration keys used by GoogleCloudLogManager class
+**App configuration keys used by GoogleCloudLogManager class**
 ```console
    # Application display name
     FLASK_APP_DISPLAY_NAME = os.environ.get('FLASK_APP_DISPLAY_NAME') or 'gcpLogDemo'
@@ -94,15 +94,7 @@ implementing a class called GoogleCloudLogManager
 To start coding right away, launch [Google Cloud Shell](https://console.cloud.google.com/home/).  
 
 ### Or use your own development environment
-If you would rather use *your own local development machine*:
-
-#### 1. [Install Google Cloud SDK](https://cloud.google.com/sdk/docs/quickstart)
-
-#### 2. Install Python
-
-*Note: Console snippets for Debian/Ubuntu based distributions.*
-
-**On your local development machine**
+If you would rather use *your own local development machine* you will need to  [Install Google Cloud SDK](https://cloud.google.com/sdk/docs/quickstart) and Install Python
 
 * Install python packages.
 
@@ -123,8 +115,9 @@ If you would rather use *your own local development machine*:
     wget https://bootstrap.pypa.io/get-pip.py
     sudo python3 get-pip.py
     ```
-
+*Note: Console snippets for Debian/Ubuntu based distributions.*
 ### Clone git repo from Github
+At this point either you are using Cloud Shell or you have a local development environment with python and Cloud SDK.
   ```console
   git clone [repo_link]
    ```
@@ -134,16 +127,23 @@ If you would rather use *your own local development machine*:
 User your cloned git repository folder for your source code and Python [venv](https://docs.python.org/3/library/venv.html)
 virtual environment to isolate python dependencies. 
 
-```
+```console
 cd gfs_log_manager
 python -m venv [venv-name]
 source [venv-name]/bin/activate
 ```
 Usual values for [venv-name] are `venv`, `dvenv`, `venv39` for a python 3.9 version virtual environment, etc.
 
+### Install python requirements
+```console
+# From gfs_log_manager/src folder
+pip install -r requirements.txt
+```
+
+
+
 ### App configuration
-At this point you have a development environment with python and Google Cloud SDK, wheter locally or on Cloud Shell and 
-are ready to configure and run the application.
+At this point you are ready to configure and run the application.
   * Edit the application configuration Config class to update the key LG_SA_KEY_JSON_FILE with the SA key file path 
   created in  [Create Google Cloud resources](#create-google-cloud-resources)
 
@@ -159,10 +159,9 @@ are ready to configure and run the application.
    flask run   
    ```
 
-  * Run with gunicorn
+  * Or run with gunicorn
    ```console
-   gunicorn start:app
-   
+   gunicorn start:app   
    ```
 
 
