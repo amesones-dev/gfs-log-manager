@@ -25,7 +25,8 @@ implementing a class called GoogleCloudLogManager
 **GoogleCloudLogManager**
 1. Creates a Google Cloud Logging client from a service account key file  
  *Note: required IAM roles for service account: Logs Writer*
-3. Creates a Google Cloud Log handler that writes logs to a Google Cloud log with a specific name defined in the Flask app configuration.
+2. Creates a Google Cloud Log handler that writes logs to a Google Cloud log with a specific name defined in the 
+[Flask](https://flask.palletsprojects.com/en/2.3.x/) app configuration.
 4. Integrates the handler with the standard python Logging class, allowing the use of standard python logging methods whilst using Google Cloud as the logs store.
 ```console
      import logging
@@ -119,7 +120,7 @@ If you would rather use *your own local development machine* you will need to  [
 ### Clone git repo from Github
 At this point either you are using Cloud Shell or you have a local development environment with python and Cloud SDK.
   ```console
-  git clone [repo_link]
+  git clone https://github.com/amesones-dev/gfs_log_manager.git
    ```
 
 ### Create a pyhon virtual environment
