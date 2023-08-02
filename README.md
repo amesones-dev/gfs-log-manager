@@ -49,14 +49,14 @@ implementing a class called GoogleCloudLogManager
 
 **Class use example to add logging to an app**
 ```console
-    # App specific
-    # Link Google Cloud Manager to app
+    # Create a Google Cloud Manager
     gl = GoogleCloudLogManager()
-    gl.init_app(self.app)
-    # From now on, when using standard logging in the app code
-    # Log messages are stored in a Google Cloud Project
-    # Defined by the app configuration 
 
+   # Link Google Cloud Manager to app
+    gl.init_app(app)
+
+    # From now on, when using standard logging in the app code,log messages
+    # are stored in a Google Cloud Project defined by the app configuration
 ```
 
 
