@@ -14,7 +14,7 @@ Writing  logs to Google Cloud Logging services can be done  in two ways:
 ## Recommended practice for writing app logs
 * Google recommends integrating Google Cloud Logging with the standard python logging library for [writing app logs](https://cloud.google.com/appengine/docs/standard/python3/writing-application-logs#writing_app_logs).
   * Allows reusing code modules with standard python logging methods.
-  * Once the Google Cloud Logging is setup to use the Python root logger, no specific code is needed to log to Google Cloud
+  * Once the Google Cloud Logging is set up to use the Python root logger, no specific code is needed to log to Google Cloud
 * For apps whose specific purpose is related to Google Cloud Logging, such as application logs analytics or logging configuration, the [Google Cloud Logging API](https://cloud.google.com/logging/docs/reference/libraries) provides advanced logs manipulation methods.
 
 ## Cloud logging implementation
@@ -23,10 +23,10 @@ This demo application  uses a Google Cloud Logging handler integrated with stand
 implementing a class called GoogleCloudLogManager
 
 **GoogleCloudLogManager**
-1. Creates a Google Cloud Logging client from a service account key file
-    *Note: required IAM roles for service account: Logs Writer*
-2. Creates a Google Cloud Log handler that writes logs to a Google Cloud log with a specific name defined in the Flask app configuration.
-3. Integrates the handler with the standard python Logging class, allowing the use of standard python logging methods whilst using Google Cloud as the logs store.
+1. Creates a Google Cloud Logging client from a service account key file  
+ *Note: required IAM roles for service account: Logs Writer*
+3. Creates a Google Cloud Log handler that writes logs to a Google Cloud log with a specific name defined in the Flask app configuration.
+4. Integrates the handler with the standard python Logging class, allowing the use of standard python logging methods whilst using Google Cloud as the logs store.
 ```
  import logging
  logging.info(info_msg)
