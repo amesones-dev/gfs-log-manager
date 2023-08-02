@@ -46,3 +46,14 @@ implementing a class called GoogleCloudLogManager
 * Defines a log_example method to illustrate both ways of leveraging Google Cloud 
 
 
+5. Class use example to add logging to an app
+```
+        # App specific
+        # Link Google Cloud Manager to app
+        gl = GoogleCloudLogManager()
+        gl.init_app(self.app)
+        # From now on, when using standard logging in the app code
+        # Log messages are stored in a Google Cloud Project
+        # Defined by the app configuration 
+
+```
