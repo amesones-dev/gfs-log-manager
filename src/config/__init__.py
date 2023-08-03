@@ -29,6 +29,7 @@ class Config(object):
 
 
 class TestConfig(object):
+    settings = ['FLASK_APP_DISPLAY_NAME', 'LG_SA_KEY_JSON_FILE', 'GC_LOGGER_NAME', 'APP_LOG_ID', 'GC_LOG_STANDARD_MODE']
     FLASK_APP_DISPLAY_NAME = os.environ.get('FLASK_APP_DISPLAY_NAME') or 'gcpLogDemoTest'
     # Recommended generating key before running server
     # export  FLASK_SECRET_KEY =$(openssl rand -base64 128 | tee /secrets_storage_path/flask_secret_key.log)
@@ -57,3 +58,10 @@ class TestConfig(object):
     # Google Cloud Logging mode
     # Set to 'standard' to integrate with Python root logger
     GC_LOG_STANDARD_MODE = os.environ.get('GC_LOG_MODE') or 'standard'
+
+    def to_dict(self):
+        r = {}
+        for k in self.settings:
+            r[k] = self.__getattribute__(k)
+        return r
+
