@@ -8,7 +8,7 @@ from app import create_app
 from config import TestConfig
 
 # Cloud Logger
-from app.glog_manager import GoogleCloudLogManager
+from glog_manager import GLogManager
 
 
 class MockFSOApp:
@@ -37,7 +37,7 @@ class GlogManagerTestCase(unittest.TestCase):
 
         # App specific
         # Link to Google Cloud Manager
-        self.gl = GoogleCloudLogManager()
+        self.gl = GLogManager()
         self.gl.init_app(self.app)
 
         # Test logging configuration

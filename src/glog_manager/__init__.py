@@ -4,7 +4,7 @@ from google.cloud.logging.handlers import CloudLoggingHandler, setup_logging
 from google.cloud.logging_v2.handlers.transports import SyncTransport
 
 
-class GoogleCloudLogManager:
+class GLogManager:
 
     def __init__(self):
         self.client = None

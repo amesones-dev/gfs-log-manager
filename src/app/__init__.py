@@ -5,11 +5,11 @@ from flask_bootstrap import Bootstrap
 
 
 # To implement Google Cloud Logging
-from app.glog_manager import GoogleCloudLogManager
+from glog_manager import GLogManager
 
 #login = LoginManager()
 bootstrap = Bootstrap()
-gl = GoogleCloudLogManager()
+gl = GLogManager()
 
 
 def create_app(config_class=Config):

@@ -20,9 +20,9 @@ Writing  logs to Google Cloud Logging services can be done  in two ways:
 ## Cloud logging implementation
 
 This demo application  uses a Google Cloud Logging handler integrated with standard python logging and uses methods form python standard logging module by 
-implementing a class called GoogleCloudLogManager
+implementing a class called GLogManager
 
-**GoogleCloudLogManager**
+**GLogManager**
 1. Creates a Google Cloud Logging client from a service account key file  
  *Note: required IAM roles for service account: Logs Writer*
 2. Creates a Google Cloud Log handler that writes logs to a Google Cloud log with a specific name defined in the 
@@ -48,17 +48,17 @@ implementing a class called GoogleCloudLogManager
 
 
 **Class use example to add logging to an app**  
-*Link GoogleCloudLogManager to app*
+*Link GLogManager to app*
 ```console
     # App specific
     # Link Google Cloud Manager to app
-    gl = GoogleCloudLogManager()
+    gl = GLogManager()
     gl.init_app(self.app)
     # From now on, when using standard logging in the app code
     # Log messages are stored in a Google Cloud Project
     # Defined by the app configuration
 ```     
-*Use GoogleCloudLogManager to log to GCP*    
+*Use GLogManager to log to GCP*    
 ```console    
     info_msg = self.app_log_id + ':starting up'
     warn_msg = self.app_log_id + ':warning message test'
@@ -76,7 +76,7 @@ implementing a class called GoogleCloudLogManager
 ```
 
 
-**App configuration keys used by GoogleCloudLogManager class**
+**App configuration keys used by GLogManager class**
 ```console
    # Application display name
     FLASK_APP_DISPLAY_NAME = os.environ.get('FLASK_APP_DISPLAY_NAME') or 'gcpLogDemo'
