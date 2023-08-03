@@ -1,6 +1,6 @@
 [project]
 name = "gfs_log_manager"
-version = "0.0.2"
+version = "0.1.2"
 authors = [
   { name = "Antonio Mesones", email="amesones_dev@outlook.com" },
 ]
