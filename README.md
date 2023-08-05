@@ -136,7 +136,7 @@ If you would rather use *your own local development machine* you will need to  [
 ### Clone git repo from Github
 At this point either you are using Cloud Shell or you have a local development environment with python and Cloud SDK.
   ```console
-  git clone https://github.com/amesones-dev/gfs_log_manager.git
+  git clone https://github.com/amesones-dev/gfs-log-manager.git
    ```
 
 ### Create a pyhon virtual environment
@@ -145,7 +145,7 @@ User your cloned git repository folder for your source code and Python [venv](ht
 virtual environment to isolate python dependencies. 
 
 ```console
-cd gfs_log_manager
+cd gfs-log-manager
 python -m venv [venv-name]
 source [venv-name]/bin/activate
 ```
@@ -153,7 +153,7 @@ Usual values for [venv-name] are `venv`, `dvenv`, `venv39` for a python 3.9 vers
 
 ### Install python requirements
 ```console
-# From gfs_log_manager/src folder
+# From gfs-log-manager/src folder
 pip install -r requirements.txt
 ```
 
