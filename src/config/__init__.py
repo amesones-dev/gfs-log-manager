@@ -27,6 +27,10 @@ class Config(object):
     # Descriptor that refers to app in logs
     APP_LOG_ID = os.environ.get('APP_LOG_ID') or FLASK_APP_DISPLAY_NAME
 
+    # Google Cloud Logging mode
+    # Set to 'standard' to integrate with Python root logger
+    GC_LOG_MODE = os.environ.get('GC_LOG_MODE') or 'standard'
+
 
 class TestConfig(object):
     FLASK_APP_DISPLAY_NAME = os.environ.get('FLASK_APP_DISPLAY_NAME') or 'gcpLogDemoTest'
@@ -56,4 +60,4 @@ class TestConfig(object):
 
     # Google Cloud Logging mode
     # Set to 'standard' to integrate with Python root logger
-    GC_LOG_STANDARD_MODE = os.environ.get('GC_LOG_MODE') or 'standard'
+    GC_LOG_MODE = os.environ.get('GC_LOG_MODE') or 'standard'

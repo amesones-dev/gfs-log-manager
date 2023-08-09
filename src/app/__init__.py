@@ -26,7 +26,7 @@ def create_app(config_class=Config):
     gl.init_app(app)
     # Uncomment to log to Google Cloud on startup
     # Example for demo purposes
-    gl.logging_example()
+#    gl.logging_example()
 
     # Flask blueprints imports
     from app.main import bp as main_bp
