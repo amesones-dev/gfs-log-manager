@@ -1,5 +1,7 @@
 import flask
 from flask import render_template, redirect, url_for, request, current_app, jsonify, flash
+
+import app
 from app.main import bp
 
 from app.main.forms import GCPCreateLogEntry
@@ -23,7 +25,8 @@ def index():
         flash('Your log entry has been created')
         return redirect(url_for('main.index'))
     display_app_name = current_app.config.get('FLASK_APP_DISPLAY_NAME')
-    return render_template('main/index.html', title=display_app_name, form=form, display_app_name=display_app_name)
+    return render_template('main/index.html', title=display_app_name, form=form, display_app_name=display_app_name,
+                           log_explorer_url=gl.generate_gcp_logs_explorer_link())
 
 
 @bp.route('/favicon.ico')
