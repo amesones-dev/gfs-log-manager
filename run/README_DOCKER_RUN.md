@@ -1,55 +1,45 @@
-
-# Creating a docker artifact from a specific git repo branch (part 1 of 2)
-## CI procedures introduction  
-In this guide, we will introduce the foundations of 
-[Continuous Integration](https://cloud.google.com/architecture/devops/devops-tech-continuous-integration)
-and inspect a  basic procedure leading to automating the process of building, testing, and delivering artifacts based 
-in code from specific branches in a repository:  creating a docker artifact from a specific git repo branch.
- 
-**CI building blocks summary**  
-1. An automated build process.
-   * Script that run builds and create artifacts that can be deployed to any environment.  
-   * Builds can de identified, referenced and repeatable.
-   * Frequent builds  
-2. A suite of automated tests that must be successful as condition for artifact creation.
-   * Unit tests
-   * Acceptance tests
-3. A CI system that runs the build and automated tests for every new version of code.
-4. Small and frequent code updates to trunk-based developments, usually implemented with tools like Git and Git based 
-products like GitHub, BitBucket, Cloud Repositories, etc. where code versions are organized in one or several 
-environments with a main branch and feature branches that developers check out, modify and,  after automatically 
-testing and passing QA tests, merge to original branches via pull requests.  
-5. An agreement that when the build breaks, fixing it should take priority over any other work.  
-
-
-In this case, we will inspect the basic steps for artifact building, which is the 
-foundation for automating the building process.
-
- On this occasion, this demo will use basic tools like docker and shell are used, since the goal is to inspect the CI process itself, without focusing on a particular 
-commercial solution (plus there is no GCP cost involved).  
-
-Google Cloud has their own set of CI/CD tools, that will be considered in future posts.
-* [Cloud Build](https://cloud.google.com/build/docs)
-* [Cloud Deploy](https://cloud.google.com/deploy/docs)
-* [Cloud Repositories](https://cloud.google.com/source-repositories/docs)
-* [Artifact Registry](https://cloud.google.com/artifact-registry/docs)
-
- 
-**References**
-* About [Continuous Integration](https://cloud.google.com/architecture/devops/devops-tech-continuous-integration)
-by Google
-'Quote' : "Continuous integration is a process in devops where changes are merged into a central repository after which the code is automated and tested."
-Google CI solutions.
-* [CI/CD quickstart](https://cloud.google.com/docs/ci-cd) by Google
-* [Devops CI](https://cloud.google.com/architecture/devops/devops-tech-continuous-integration) by Google 
- 
-
 ## Local environment build of a specific feature branch
-* The example uses the repo [gfs-log-manager](https://github.com/amesones-dev/gfs-log-manager.git).  
-* The [ci_procs](https://github.com/amesones-dev/gfs-log-manager/tree/ci_procs) branch contains a [Dockerfile](https://github.com/amesones-dev/gfs-log-manager/blob/ci_procs/run/Dockerfile) to build and run the application with docker engine.  
-* A running docker based on the Dockerfile calls python to run the application with Flask as per [start.py](https://github.com/amesones-dev/gfs-log-manager/blob/ci_procs/src/start.py)
+* Repo:  [gfs-log-manager](https://github.com/amesones-dev/gfs-log-manager.git).  
+* Branch to build: [ci_procs](https://github.com/amesones-dev/gfs-log-manager/tree/ci_procs)
+* [Dockerfile](https://github.com/amesones-dev/gfs-log-manager/blob/ci_procs/run/Dockerfile)  
+* Running the application with  Flask: [start.py](https://github.com/amesones-dev/gfs-log-manager/blob/ci_procs/src/start.py)
+
+**Dockerfile**
+```Dockerfile
+# Python image to use.
+FROM python:3.10-alpine
+
+# Set the working directory to /app
+WORKDIR /app
+
+# copy the requirements file used for dependencies
+COPY requirements.txt .
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
+
+# Copy the rest of the working directory contents into the container at /app
+COPY . .
+
+# Run start.py when the container launches
+ENTRYPOINT ["python", "start.py"]
+```
+**Startup script run by docker image**
+```python
+# start.py
+import os
+from flask import Flask
+
+from app import create_app
+app = create_app()
+
+if __name__ == '__main__':
+    server_port = os.environ.get('PORT', '8080')
+    app.run(host='0.0.0.0', port=int(server_port))
+```
 
 ### Clone repo and checkout specific branch
+**Instructions**
 ```shell
 # Local build
 REPO='https://github.com/amesones-dev/gfs-log-manager.git'
@@ -68,7 +58,7 @@ git checkout ${FEATURE_BRANCH}
     Switched to a new branch 'ci_procs'
 ````    
 
-### Build Dockerfile stored in feature branch
+#### Build Dockerfile stored in feature branch
 ```shell
 # Identify your build
 # Usually automated CI systems provide UUID for build IDs and maintains a Build ID database
@@ -81,53 +71,128 @@ export LOCAL_DOCKER_IMG_TAG="${REPO_NAME}-${FEATURE_BRANCH}-${RID}"
 
 # Launch build process with docker
 # The build is done with your local environment docker engine
-docker build ./src -f ./run/Dockerfile -t ${LOCAL_DOCKER_IMG_TAG}
+# docker build ./src -f ./run/Dockerfile -t ${LOCAL_DOCKER_IMG_TAG}
+# With logs captured to file 
+docker build ./src -f ./run/Dockerfile -t ${LOCAL_DOCKER_IMG_TAG} --no-cache --progress=plain  2>&1 | tee ${BUILD_ID}.log
 # CI systems usually send builds to automated build engine APIs
+```
+
+#### Inspect BUILD and ARTIFACTS details
+```shell
+echo $BUILD_ID
+# Output 
+  45e4b913-dc76-4aa9-9898-217490fdd0fd
+
+tail -n 5 "${BUILD_ID}.log"
+# Output
+    # 10 exporting layers
+    #10 exporting layers 0.8s done
+    #10 writing image sha256:a0bdb9a4065cd834549d1c2c7586c96005c1d05f0e1732e5f13edc715d62cd2b done
+    #10 naming to docker.io/library/gfs-log-manager-ci_procs-24754-1691654416 done
+  #10 DONE 0.8s
+
+head -n 5 "${BUILD_ID}.log"
+# Output
+    # 0 building with "default" instance using docker driver
+    
+    #1 [internal] load build definition from Dockerfile
+    #1 transferring dockerfile: 502B done
+    #1 DONE 0.0s
+    
+    
+# Artifact (docker image) details
+docker image ls ${LOCAL_DOCKER_IMG_TAG}
+# Output
+  REPOSITORY                                  TAG       IMAGE ID       CREATED         SIZE
+  gfs-log-manager-ci_procs-24754-1691654416   latest    a0bdb9a4065c   5 seconds ago   102MB
+     
 ````
 
-### Run the newly built docker image
+#### Run the newly built docker image
 * Set container port for running application
 ```shell
 # Default container port is 8080 if PORT not specified
 export PORT=8081
-```
-
-* Set the local environment for the running docker image  
-Usually applications expect a number of config values to be present in the running environment as variables.  
-  * The demo app expects as minimal configuration the location for the Service Account(SA) key file that will identify 
-  the app when accessing Cloud Logging API.  
-
-```shell
 export LG_SA_KEY_JSON_FILE='/etc/secrets/sa_key_lg.json'
-```
+export FLASK_SECRET_KEY =$(openssl rand -base64 128) 
 
-* Run the docker image
-```shell
 # Known local path containing  SA key sa_key_lg.json
 export LOCAL_SA_KEY_PATH='/secure_location'
 
 # Set environment with -e
 # Publish app port with -p 
 # Mount LOCAL_SA_KEY_PATH to /etc/secrets in running container
-docker run -e PORT=${PORT} -e LG_SA_KEY_JSON_FILE="${LG_SA_KEY_JSON_FILE}"  -p ${PORT}:${PORT}  -v "${LOCAL_SA_KEY_PATH}":/etc/secrets  ${LOCAL_BUILD_TAG}
+docker run -e PORT -e LG_SA_KEY_JSON_FILE -e FLASK_SECRET_KEY -p ${PORT}:${PORT}  -v "${LOCAL_SA_KEY_PATH}":/etc/secrets  ${LOCAL_DOCKER_IMG_TAG}
 ```
 
-###For next part of this guide (2/2)
-#### Testing the application
-* Defining endpoints
-* Checking responses
-* Running unittests in feature branch
-* Note about automated testing tools
+### Watch the app running with  Web Preview
+In the example, launch Web Preview on Cloud Shell, setting port to 8081.
 
-#### Upload artifact to artifact registry
-* Registry tags vs local build tags
-* Uploading artifact command sequence 
-* Managing artifacts
+### Inspect and test running container
+*Note: Execute commands in a different Cloud Shell tab*
+* Checking container is running and inspecting env
 
-#### About popular artifact registries
-#### Artifacts as inputs to CI procedures  
+```shell
+docker ps 
+# Output
+  # CONTAINER ID   IMAGE                                       COMMAND             CREATED         STATUS         PORTS                    NAMES
+  3127ed2ef041   gfs-log-manager-ci_procs-24754-1691654416   "python start.py"   3 minutes ago   Up 3 minutes   0.0.0.0:8081->8081/tcp   beautiful_jackson
 
+docker exec 3127ed2ef041 printenv
+# Ouptut
+  PORT=8081
+  LG_SA_KEY_JSON_FILE=/etc/secrets/sa_key_lg.json
+  ...
 
+# Check code deployed to container from git feature branch
+docker exec 3127ed2ef041 ls -R
+# Output
+  app
+  config
+  glog_manager
+  requirements.txt
+  start.py
+  ...
+  
+```
+* Testing endpoints
+```shell
+# Basic app endpoints tests
+# Main url
+curl --head  localhost:8081
+# Output
+  HTTP/1.1 200 OK
+  Content-Type: text/html; charset=utf-8
+  ...
+  
+# The app implements a /healthcheck endpoint that can be used for liveness and readiness probes
+# Output set by app design
+curl -i localhost:8081/healthcheck
+  HTTP/1.1 200 OK
+  ...
+  Content-Type: application/json
 
+  {"status":"OK"}
+
+# Test any app endpoints as needed
+export ENDPOINT='index'
+curl -I  localhost:8081/${ENDPOINT}
+# Output 
+  HTTP/1.1 200 OK
+  ...
+ 
+curl -I -s  localhost:8081/${ENDPOINT} --output http-test-${ENDPOINT}.log
+grep   'HTTP' http-test-${ENDPOINT}.log
+# Output
+  HTTP/1.1 200 OK
+
+# Non existent endpoint
+export ENDPOINT=app_does_not_implement
+curl -I -s  localhost:8081/${ENDPOINT} --output http-test-${ENDPOINT}.log 
+grep   'HTTP' http-test-${ENDPOINT}.log
+# Output
+  HTTP/1.1 404 NOT FOUND
+   
+```
 
 

@@ -4,6 +4,7 @@
 #### Create a service account (user managed SA)
 ```shell
 export PROJECT_ID="YOUR_PROJECT_ID"
+
 gcloud config set project ${PROJECT_ID}
 export SA_NAME="demo-logger"
 gcloud iam service-accounts create  ${SA_NAME} --description="A description" --display-name="${SA_NAME}"
@@ -14,6 +15,12 @@ gcloud iam service-accounts create  ${SA_NAME} --description="A description" --d
 export SA_EMAIL="${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
 export ROLE_ID="roles/logging.logWriter"
 gcloud projects add-iam-policy-binding ${PROJECT_ID}  --member="serviceAccount:${SA_EMAIL}" --role="${ROLE_ID}"
+# Output
+    Updated IAM policy for project [PROJECT_ID].
+    bindings:
+    - members:
+      - serviceAccount:demo-logger@PROJECT_ID.iam.gserviceaccount.com
+      role: roles/logging.logWriter
 ```
 #### Create SA key
 ```shell
