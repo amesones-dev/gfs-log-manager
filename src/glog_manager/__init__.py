@@ -118,4 +118,11 @@ class GLogManager:
                 print("Exception {}:{} Method: {}".format(e.__class__, e, self.init_app.__name__))
                 pass
 
+    def generate_gcp_logs_explorer_link(self):
+        base_url = 'https://console.cloud.google.com/logs/'
+        query_template = 'query;query=logName%3D%22projects%2FPROJECT_ID%2Flogs%2FGC_LOGGER_NAME%22;'
+        return base_url + query_template.replace('PROJECT_ID', self.client.project).replace('GC_LOGGER_NAME', self.cloud_logger.name)
+
+
+
 
