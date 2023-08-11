@@ -73,7 +73,7 @@ export LOCAL_DOCKER_IMG_TAG="${REPO_NAME}-${FEATURE_BRANCH}-${RID}"
 # The build is done with your local environment docker engine
 # docker build ./src -f ./run/Dockerfile -t ${LOCAL_DOCKER_IMG_TAG}
 # With logs captured to file 
-docker build ./src -f ./run/Dockerfile -t ${LOCAL_DOCKER_IMG_TAG} --no-cache --progress=plain  2>&1 | tee ${BUILD_ID}.log
+docker build . -f ./run/Dockerfile -t ${LOCAL_DOCKER_IMG_TAG} --no-cache --progress=plain  2>&1 | tee ${BUILD_ID}.log
 # CI systems usually send builds to automated build engine APIs
 ```
 
@@ -114,7 +114,7 @@ docker image ls ${LOCAL_DOCKER_IMG_TAG}
 # Default container port is 8080 if PORT not specified
 export PORT=8081
 export LG_SA_KEY_JSON_FILE='/etc/secrets/sa_key_lg.json'
-export FLASK_SECRET_KEY =$(openssl rand -base64 128) 
+export FLASK_SECRET_KEY=$(openssl rand -base64 128) 
 
 # Known local path containing  SA key sa_key_lg.json
 export LOCAL_SA_KEY_PATH='/secure_location'
@@ -195,4 +195,16 @@ grep   'HTTP' http-test-${ENDPOINT}.log
    
 ```
 
+```shell
+# Running code integrated unittests
+export TID=$(python -c "import uuid;print(uuid.uuid4())")
+export LOCAL_DOCKER_IMG_TAG_TEST="Test-{LOCAL_DOCKER_IMG_TAG" 
+docker build . -f ./run/Dockerfile-test   -t ${LOCAL_DOCKER_IMG_TAG_TEST} --no-cache --progress=plain
 
+# You may want to use a different set of environment variables to run tests
+# For instance, to test logging you can have a specific Cloud log store
+# In GCP using a different SA_KEY makes the application log to a different project
+# A specific SA_KEY and GCP project may be used for tests by changing environment variables
+docker run -e PORT -e LG_SA_KEY_JSON_FILE -e FLASK_SECRET_KEY -p ${PORT}:${PORT}  -v "${LOCAL_SA_KEY_PATH}":/etc/secrets  ${LOCAL_DOCKER_IMG_TAG_TEST}
+
+```

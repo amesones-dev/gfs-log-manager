@@ -16,9 +16,7 @@ class GLogManager:
         self.cloud_logger = None
         self.standard_mode = None
 
-
     def logging_example(self):
-
         info_msg = self.app_log_id + ':starting up'
         warn_msg = self.app_log_id + ':warning message test'
         error_data = {"url": "http://test.example.com", "data": "Test error", "code": 403}
@@ -43,9 +41,7 @@ class GLogManager:
             # Logging via Cloud Logger
             self.cloud_logger.log_text(log_msg, severity=log_level)
 
-
-        # Validates whether an app can be integrated with gbq_manager
-
+    # Validates whether an app can be integrated with gbq_manager
     @staticmethod
     def validate_app(app) -> bool:
         # App: any object that has a 'config' property which is a dictionary
