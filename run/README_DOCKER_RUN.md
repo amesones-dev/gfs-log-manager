@@ -215,3 +215,30 @@ docker run -e PORT -e LG_SA_KEY_JSON_FILE -e FLASK_SECRET_KEY -p ${PORT}:${PORT}
 grep 'OK' ""${TEST_ID}-result.log"" 
 
 ```
+
+```shell
+export DOCKERHUB_USER='YOUR_DOCKERHUB_USER'
+export DOCKERHUB_REPO='YOUR_DOCKERIMAGE_REPO'
+docker login "$DOCKERHUB_USER"
+
+# Builds docker image
+export LOCAL_TAG=${LOCAL_DOCKER_IMG_TAG}
+export REMOTE_TAG="${DOCKERHUB_USER}/${DOCKERHUB_REPO}:${LOCAL_TAG}" 
+
+# Add remote tag to the docker image currently tag as <LOCAL_DOCKER_IMG_TAG> 
+docker tag "${LOCAL__TAG}" "${REMOTE_TAG}"
+
+# Push the image to the docker repository using the full remote tag    
+docker push "${DOCKERHUB_USER}/${DOCKERHUB_REPO}:${LOCAL_TAG}"
+
+
+# Tests image
+export LOCAL_TAG=${LOCAL_DOCKER_IMG_TAG_TEST}
+export REMOTE_TAG="${DOCKERHUB_USER}/${DOCKERHUB_REPO}:${LOCAL_TAG}"
+
+# Add remote tag to the docker image currently tag as <LOCAL_DOCKER_IMG_TAG> 
+docker tag "${LOCAL_TAG}" "${REMOTE_TAG}"
+
+# Push the image to the docker repository using the full remote tag    
+docker push "${DOCKERHUB_USER}/${DOCKERHUB_REPO}:${LOCAL_TAG}"
+```
