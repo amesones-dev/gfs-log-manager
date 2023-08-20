@@ -58,16 +58,40 @@ git checkout ${FEATURE_BRANCH}
     Switched to a new branch 'ci_procs'
 ````    
 
-#### Build Dockerfile stored in feature branch
 ```shell
 # Identify your build
 # Usually automated CI systems provide UUID for build IDs and maintains a Build ID database
 export BUILD_ID=$(python -c "import uuid;print(uuid.uuid4())")
 
-# Use a meaningful local docker image tag
+# Use a meaningful local docker image tag for the build
 # Automated CI systems can generate a docker image tag for you
 export RID="${RANDOM}-$(date +%s)" 
 export LOCAL_DOCKER_IMG_TAG="${REPO_NAME}-${FEATURE_BRANCH}-${RID}"
+
+```
+```shell
+# Running code integrated unittests
+export TID=$(python -c "import uuid;print(uuid.uuid4())")
+# Tests named based on build docker image
+export LOCAL_DOCKER_IMG_TAG_TEST="test-${LOCAL_DOCKER_IMG_TAG}"
+docker build . -f ./run/Dockerfile-test   -t ${LOCAL_DOCKER_IMG_TAG_TEST}  --no-cache --progress=plain  2>&1 | tee ${BUILD_ID}.log
+
+
+# You may want to use a different set of environment variables to run tests
+# Alternatively, code built-in tests can use a specific configuration defined inline.
+export PORT=8081
+export LG_SA_KEY_JSON_FILE='/etc/secrets/sa_key_lg.json'
+export FLASK_SECRET_KEY=$(openssl rand -base64 128) 
+
+# Known local path containing  SA key sa_key_lg.json
+export LOCAL_SA_KEY_PATH='/secure_location'
+docker run -e PORT -e LG_SA_KEY_JSON_FILE -e FLASK_SECRET_KEY -p ${PORT}:${PORT}  -v "${LOCAL_SA_KEY_PATH}":/etc/secrets  ${LOCAL_DOCKER_IMG_TAG_TEST} 2>&1 | tee ${TEST_ID}-result.log
+grep 'OK' ""${TEST_ID}-result.log"" 
+
+```
+
+#### Build
+```shell
 
 # Launch build process with docker
 # The build is done with your local environment docker engine
@@ -128,7 +152,7 @@ docker run -e PORT -e LG_SA_KEY_JSON_FILE -e FLASK_SECRET_KEY -p ${PORT}:${PORT}
 ### Watch the app running with  Web Preview
 In the example, launch Web Preview on Cloud Shell, setting port to 8081.
 
-### Inspect and test running container
+### Inspect running container
 *Note: Execute commands in a different Cloud Shell tab*
 * Checking container is running and inspecting env
 
@@ -155,7 +179,8 @@ docker exec 3127ed2ef041 ls -R
   ...
   
 ```
-* Testing endpoints
+
+* Basic endpoint testing (Smoke Test)*
 ```shell
 # Basic app endpoints tests
 # Main url
@@ -194,27 +219,7 @@ grep   'HTTP' http-test-${ENDPOINT}.log
   HTTP/1.1 404 NOT FOUND
    
 ```
-
-```shell
-# Running code integrated unittests
-export TID=$(python -c "import uuid;print(uuid.uuid4())")
-export LOCAL_DOCKER_IMG_TAG_TEST="test-${LOCAL_DOCKER_IMG_TAG}"
-
-
-docker build . -f ./run/Dockerfile-test   -t ${LOCAL_DOCKER_IMG_TAG_TEST}  --no-cache --progress=plain  2>&1 | tee ${BUILD_ID}.log
-
-# You may want to use a different set of environment variables to run tests
-# Alternatively, code built-in tests can use a specific configuration defined inline.
-export PORT=8081
-export LG_SA_KEY_JSON_FILE='/etc/secrets/sa_key_lg.json'
-export FLASK_SECRET_KEY=$(openssl rand -base64 128) 
-
-# Known local path containing  SA key sa_key_lg.json
-export LOCAL_SA_KEY_PATH='/secure_location'
-docker run -e PORT -e LG_SA_KEY_JSON_FILE -e FLASK_SECRET_KEY -p ${PORT}:${PORT}  -v "${LOCAL_SA_KEY_PATH}":/etc/secrets  ${LOCAL_DOCKER_IMG_TAG_TEST} 2>&1 | tee ${TEST_ID}-result.log
-grep 'OK' ""${TEST_ID}-result.log"" 
-
-```
+### Store artifacts in artifact registry system
 
 ```shell
 export DOCKERHUB_USER='YOUR_DOCKERHUB_USER'
@@ -232,7 +237,8 @@ docker tag "${LOCAL__TAG}" "${REMOTE_TAG}"
 docker push "${DOCKERHUB_USER}/${DOCKERHUB_REPO}:${LOCAL_TAG}"
 
 
-# Tests image
+
+# Docker tests image
 export LOCAL_TAG=${LOCAL_DOCKER_IMG_TAG_TEST}
 export REMOTE_TAG="${DOCKERHUB_USER}/${DOCKERHUB_REPO}:${LOCAL_TAG}"
 

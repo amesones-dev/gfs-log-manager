@@ -1,4 +1,5 @@
 # Python image to use.
+# Base image that can be reused for tests and build
 FROM python:3.10-alpine
 
 # Set the working directory to /app

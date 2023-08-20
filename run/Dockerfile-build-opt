@@ -1,5 +1,6 @@
 # Python image to use.
-FROM python:3.10-alpine
+# Reusing base image
+FROM gfs-log-manager:base
 
 # Set the working directory to /app
 WORKDIR /app
