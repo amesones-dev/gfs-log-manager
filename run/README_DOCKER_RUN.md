@@ -262,20 +262,26 @@ docker image ls
     gfs-log-manager   base      616bd572b99d   2 minutes ago   102MB
 ```
 
-### Build tests image with optimized Dockerfile using docker image gfs-log-manager:base
+### Docker build and tests image with gfs-log-manager:base
 ```shell
 cat ./run/Dockerfile-tests-opt 
-    # Python image to use
     # Reusing base image
     FROM gfs-log-manager:base
-    # Set the working directory to /app
-    WORKDIR /app
-    # Run application  when the container launches
-  ENTRYPOINT ["python", "tests.py"]
+    ...
+    ENTRYPOINT ["python", "tests.py"]
 
+cat ./run/Dockerfile-build-opt 
+    # Reusing base image
+    FROM gfs-log-manager:base
+    ...
+    ENTRYPOINT ["python", "start.py"]
+  
+  
+
+# Optimizing docker test image with Dockerfile-tests-opt
 docker build . -f ./run/Dockerfile-tests-opt   -t ${LOCAL_DOCKER_IMG_TAG_TEST}  --no-cache --progress=plain 2>&1|tee test-${BUILD_ID}-${TID}.log
+
+# Optimizing docker build image with Dockerfile-build-opt 
+docker build . -f ./run/Dockerfile-build-opt -t ${LOCAL_DOCKER_IMG_TAG} --no-cache --progress=plain  2>&1 | tee ${BUILD_ID}.log
+
 ```
-docker run -e LG_SA_KEY_JSON_FILE -e FLASK_SECRET_KEY  -v "${LOCAL_SA_KEY_PATH}":/etc/secrets ${LOCAL_DOCKER_IMG_TAG_TEST} 2>&1|tee ${TEST_ID}-result.log
-
-### Build tests image with optimized Dockerfile using docker image gfs-log-manager:base
-
