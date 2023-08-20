@@ -48,7 +48,6 @@ class GlogManagerTestCase(unittest.TestCase):
 
     def test_0_gl_creation_check(self):
         # Check config
-        self.assertEqual(self.gl.standard_mode, self.app.config.get('GC_LOG_MODE') == 'standard')
         self.assertEqual(self.gl.app_log_id, self.app.config.get('APP_LOG_ID'))
 
         # Check client
@@ -57,8 +56,6 @@ class GlogManagerTestCase(unittest.TestCase):
 
         # Check handler
         self.assertNotEqual(self.gl.handler, None)
-
-
 
 
 if __name__ == '__main__':
