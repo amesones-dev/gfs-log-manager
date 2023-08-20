@@ -250,5 +250,31 @@ docker push "${DOCKERHUB_USER}/${DOCKERHUB_REPO}:${LOCAL_TAG}"
 ```
 
 
-# Optimizing artifact size
+## Optimizing artifact size
+### Build base image that can be reused by tests and builds
+
+```shell
 docker build . -f ./run/Dockerfile-base-opt -t gfs-log-manager:base
+
+docker image ls
+# Output
+    REPOSITORY        TAG       IMAGE ID       CREATED         SIZE
+    gfs-log-manager   base      616bd572b99d   2 minutes ago   102MB
+```
+
+### Build tests image with optimized Dockerfile using docker image gfs-log-manager:base
+```shell
+cat ./run/Dockerfile-tests-opt 
+    # Python image to use
+    # Reusing base image
+    FROM gfs-log-manager:base
+    # Set the working directory to /app
+    WORKDIR /app
+    # Run application  when the container launches
+  ENTRYPOINT ["python", "tests.py"]
+
+docker build . -f ./run/Dockerfile-tests-opt   -t ${LOCAL_DOCKER_IMG_TAG_TEST}  --no-cache --progress=plain 2>&1|tee test-${BUILD_ID}-${TID}.log
+```
+
+
+### Build tests image with optimized Dockerfile using docker image gfs-log-manager:base
