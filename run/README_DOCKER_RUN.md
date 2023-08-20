@@ -248,3 +248,7 @@ docker tag "${LOCAL_TAG}" "${REMOTE_TAG}"
 # Push the image to the docker repository using the full remote tag    
 docker push "${DOCKERHUB_USER}/${DOCKERHUB_REPO}:${LOCAL_TAG}"
 ```
+
+
+# Optimizing artifact size
+docker build . -f ./run/Dockerfile-base-opt -t gfs-log-manager:base

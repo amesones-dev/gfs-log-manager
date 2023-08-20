@@ -6,4 +6,4 @@ FROM gfs-log-manager:base
 WORKDIR /app
 
 # Run application  when the container launches
-ENTRYPOINT ["python", "start.py"]
+ENTRYPOINT ["python", "tests.py"]
