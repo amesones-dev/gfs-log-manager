@@ -15,6 +15,14 @@
                 </button>
                 <a class="navbar-brand" href="{{ url_for('main.index') }}">{{ display_app_name }}</a>
             </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                 <ul class="nav navbar-nav navbar-right">
+                        {% if log_explorer_url %}
+                        <li ><a href="{{ log_explorer_url }}">Google Cloud Logs Explorer</a></li>
+                        {% endif %}
+
+                </ul>
+            </div>
         </div>
     </nav>
 {% endblock %}

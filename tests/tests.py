@@ -50,13 +50,15 @@ class GlogManagerTestCase(unittest.TestCase):
         # Check config
         self.assertEqual(self.gl.standard_mode, self.app.config.get('GC_LOG_MODE') == 'standard')
         self.assertEqual(self.gl.app_log_id, self.app.config.get('APP_LOG_ID'))
-        self.assertEqual(self.gl.app_log_id, self.app.config.get('APP_LOG_ID'))
+
+        # Check client
+        self.assertNotEqual(self.gl.client, None)
+        self.assertTrue(self.gl.initialized())
 
         # Check handler
         self.assertNotEqual(self.gl.handler, None)
 
-        # Check client
-        self.assertNotEqual(self.gl.client, None)
+
 
 
 if __name__ == '__main__':
