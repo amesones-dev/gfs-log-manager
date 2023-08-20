@@ -61,7 +61,7 @@ class TestConfig(object):
 
     # Google Cloud Logging mode
     # Set to 'standard' to integrate with Python root logger
-    GC_LOG_STANDARD_MODE = os.environ.get('GC_LOG_MODE') or 'standard'
+    GC_LOG_MODE = os.environ.get('GC_LOG_MODE') or 'standard'
 
     def to_dict(self):
         r = {}

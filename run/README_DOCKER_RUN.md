@@ -74,7 +74,7 @@ export LOCAL_DOCKER_IMG_TAG="${REPO_NAME}-${FEATURE_BRANCH}-${RID}"
 export TID=$(python -c "import uuid;print(uuid.uuid4())")
 # Tests named based on build docker image
 export LOCAL_DOCKER_IMG_TAG_TEST="test-${LOCAL_DOCKER_IMG_TAG}"
-docker build . -f ./run/Dockerfile-test   -t ${LOCAL_DOCKER_IMG_TAG_TEST}  --no-cache --progress=plain  2>&1 | tee ${BUILD_ID}.log
+docker build . -f ./run/Dockerfile-tests   -t ${LOCAL_DOCKER_IMG_TAG_TEST}  --no-cache --progress=plain  2>&1 | tee ${BUILD_ID}.log
 
 
 # You may want to use a different set of environment variables to run tests
@@ -85,7 +85,7 @@ export FLASK_SECRET_KEY=$(openssl rand -base64 128)
 
 # Known local path containing  SA key sa_key_lg.json
 export LOCAL_SA_KEY_PATH='/secure_location'
-docker run -e PORT -e LG_SA_KEY_JSON_FILE -e FLASK_SECRET_KEY -p ${PORT}:${PORT}  -v "${LOCAL_SA_KEY_PATH}":/etc/secrets  ${LOCAL_DOCKER_IMG_TAG_TEST} 2>&1 | tee ${TEST_ID}-result.log
+docker run -e PORT -e LG_SA_KEY_JSON_FILE -e FLASK_SECRET_KEY -p ${PORT}:${PORT}  -v "${LOCAL_SA_KEY_PATH}":/etc/secrets  ${LOCAL_DOCKER_IMG_TAG_TEST} 2>&1|tee ${TEST_ID}-result.log
 grep 'OK' ""${TEST_ID}-result.log"" 
 
 ```
@@ -275,6 +275,7 @@ cat ./run/Dockerfile-tests-opt
 
 docker build . -f ./run/Dockerfile-tests-opt   -t ${LOCAL_DOCKER_IMG_TAG_TEST}  --no-cache --progress=plain 2>&1|tee test-${BUILD_ID}-${TID}.log
 ```
-
+docker run -e LG_SA_KEY_JSON_FILE -e FLASK_SECRET_KEY  -v "${LOCAL_SA_KEY_PATH}":/etc/secrets ${LOCAL_DOCKER_IMG_TAG_TEST} 2>&1|tee ${TEST_ID}-result.log
 
 ### Build tests image with optimized Dockerfile using docker image gfs-log-manager:base
+
