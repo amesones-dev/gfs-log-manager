@@ -87,14 +87,15 @@ class GLogManager:
                 try:
                     self.client = google.cloud.logging.Client()
                 except Exception as e:
-                    print("Exception {}:{} Method: {}".format(e.__class__, e, self.init_app.__name__))
+                    logging.log(level=logging.ERROR, msg="Exception {}:{} Method: {}".format(e.__class__, e, self.init_app.__name__))
                     pass
             else:
                 # Credential from file
                 try:
                     self.client = google.cloud.logging.Client.from_service_account_json(sa_creds_json_file)
                 except Exception as e:
-                    print("Exception {}:{} Method: {}".format(e.__class__, e, self.init_app.__name__))
+                    logging.log(level=logging.ERROR,
+                                msg="Exception {}:{} Method: {}".format(e.__class__, e, self.init_app.__name__))
                     pass
             if self.initialized():
                 self.standard_mode = app.config.get('GC_LOG_MODE') == 'standard'
@@ -107,7 +108,8 @@ class GLogManager:
                         # Set up standard logging to the lowest level for demo purposes
                         logging.getLogger().setLevel(logging.INFO)  # defaults to WARN
                 except Exception as e:
-                    print("Exception {}:{} Method: {}".format(e.__class__, e, self.init_app.__name__))
+                    logging.log(level=logging.ERROR,
+                                msg="Exception {}:{} Method: {}".format(e.__class__, e, self.init_app.__name__))
                     pass
 
             # Additionally create a logger object to use Google Cloud logger methods such as log_text, log_struct
@@ -115,7 +117,8 @@ class GLogManager:
                 self.cloud_logger = google.cloud.logging.Logger(client=self.client,
                                                                 name=app.config.get('GC_LOGGER_NAME'))
             except Exception as e:
-                print("Exception {}:{} Method: {}".format(e.__class__, e, self.init_app.__name__))
+                logging.log(level=logging.ERROR,
+                            msg="Exception {}:{} Method: {}".format(e.__class__, e, self.init_app.__name__))
                 pass
 
     def generate_gcp_logs_explorer_link(self):
